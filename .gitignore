@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+questions.txt
+TODO.txt
+
+*.dot
+*.png
+
+*.json
