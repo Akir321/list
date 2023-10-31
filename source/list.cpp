@@ -80,11 +80,11 @@ int listError(List *list)
     if (!list->next) return LIST_NEXT_NULL;
     if (!list->prev) return LIST_PREV_NULL;
 
-    if (list->capacity < list->size)     return LIST_OVERFLOW;
+    if (list->capacity < list->size)    return LIST_OVERFLOW;
 
     if (list->next[0] > list->capacity) return LIST_BAD_VARIABLES;
     if (list->prev[0] > list->capacity) return LIST_BAD_VARIABLES;
-    if (list->free    > list->capacity) return LIST_BAD_VARIABLES;
+    //if (list->free  > list->capacity) return LIST_BAD_VARIABLES;
 
     int current = list->next[0];
     while (list->next[current] > 0)
@@ -116,7 +116,7 @@ int listDump(List *list, const char *file, int line, const char *function)
     printf("Arrays:\n");
     printf("index  data  next  prev:\n");
 
-    for (int i = 0; i < list->capacity; i++)
+    for (int i = 0; i <= list->capacity; i++)
     {
         if      (i == 0)             putchar('-');
         else if (list->prev[i] >= 0) putchar('*');
@@ -139,10 +139,15 @@ int listAdd(List *list, int arrayAnchorIndex, elem_t value)
 {
     LIST_VERIFY;
 
-    if (list->size == list->capacity)       return LIST_OVERFLOW;
+    if (list->size >= list->capacity)
+    {
+        int error = listReallocUp(list, ListReallocRate);
+        if (error) return error;
+    }
+    LIST_VERIFY;
 
-    if (arrayAnchorIndex > list->capacity)  return LIST_INVALID_INDEX;
-    if (list->prev[arrayAnchorIndex] == -1) return LIST_INVALID_INDEX;
+    if (arrayAnchorIndex > list->capacity) return LIST_INVALID_INDEX;
+    if (list->prev[arrayAnchorIndex] < 0)  return LIST_INVALID_INDEX;
 
     int index  =  list->free;
     list->free = -list->next[index];
@@ -181,6 +186,33 @@ int listDel(List *list, int arrayElemIndex)
     list->free                 = arrayElemIndex;
 
     list->size--;
+
+    LIST_VERIFY;
+    return EXIT_SUCCESS;
+}
+
+int listReallocUp(List *list, int reallocRate)
+{
+    LIST_VERIFY;
+
+    int prevCapacity = list->capacity;
+    list->capacity  *= reallocRate;
+
+    list->data = (elem_t *)realloc(list->data, (list->capacity + 1) * sizeof(elem_t));
+    if (!list->data) { perror("data->next:"); return LIST_MEMORY_ERROR; }
+
+    list->next = (elem_t *)realloc(list->next, (list->capacity + 1) * sizeof(elem_t));
+    if (!list->next) { perror("list->next:"); return LIST_MEMORY_ERROR; }
+
+    list->prev = (elem_t *)realloc(list->prev, (list->capacity + 1) * sizeof(elem_t));
+    if (!list->prev) { perror("list->prev:"); return LIST_MEMORY_ERROR; }
+
+    for (int i = prevCapacity + 1; i <= list->capacity; i++)
+    {
+        list->data[i] = Poison;
+        list->next[i] = - i - 1;
+        list->prev[i] =     - 1;
+    }
 
     LIST_VERIFY;
     return EXIT_SUCCESS;

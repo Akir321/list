@@ -6,7 +6,8 @@
 typedef int elem_t;
 #define elemFormat "%5d"
 
-const int Poison = 0;
+const int Poison          = 0;
+const int ListReallocRate = 2;
 
 #define LIST_DUMP(list) listDump(list, __FILE__,  __LINE__, __func__)
 
@@ -41,6 +42,8 @@ int listDump (List *list, const char *file, int line, const char *function);
 
 int listAdd  (List *list, int arrayAnchorIndex, elem_t value);
 int listDel  (List *list, int arrElemIndex);
+
+int listReallocUp(List *list, int reallocRate);
 
 
 #endif //__LIST_H__
