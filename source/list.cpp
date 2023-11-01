@@ -171,7 +171,8 @@ int listDel(List *list, int arrayElemIndex)
 {
     LIST_VERIFY;
 
-    if (arrayElemIndex >= list->size)     return LIST_INVALID_INDEX;
+    if (arrayElemIndex <= 0)              return LIST_INVALID_INDEX;
+    if (arrayElemIndex >= list->capacity) return LIST_INVALID_INDEX;
     if (list->prev[arrayElemIndex] == -1) return LIST_INVALID_INDEX;
 
     int indexPrev = list->prev[arrayElemIndex];

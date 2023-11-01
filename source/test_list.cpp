@@ -32,5 +32,9 @@ int main()
     LIST_DUMP(&lst);
     LIST_GR_DUMP(&lst);
 
+    listDel(&lst, 0);
+    LIST_DUMP(&lst);
+    LIST_GR_DUMP(&lst);
+
     listDtor(&lst);
 }
