@@ -45,5 +45,14 @@ int listDel  (List *list, int arrElemIndex);
 
 int listReallocUp(List *list, int reallocRate);
 
+#include "graphic_dump.h"
+
+#ifdef  __GRAPHIC_DUMP_H__
+#define LIST_GR_DUMP(list) listGraphicDump(list)
+
+#else
+#define LIST_GR_DUMP(list)
+
+#endif //__GRAPHIC_DUMP_H__
 
 #endif //__LIST_H__
