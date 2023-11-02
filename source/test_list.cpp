@@ -18,7 +18,7 @@ int main()
     LIST_DUMP(lst);
     LIST_GR_DUMP(lst);
 
-    ASSISTED(listPushBack(lst, 6));
+    ASSISTED(listPushFront(lst, 6));
     LIST_DUMP(lst);
     LIST_GR_DUMP(lst);
 
@@ -26,7 +26,7 @@ int main()
     LIST_DUMP(lst);
     LIST_GR_DUMP(lst);
 
-    listDel(lst, 1);
+    listDel(lst, 3);
     LIST_DUMP(lst);
     LIST_GR_DUMP(lst);
 
