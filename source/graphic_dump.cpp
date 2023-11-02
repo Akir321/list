@@ -18,7 +18,7 @@ int listGraphicDump(List *list)
 
     FILE* dumpFile = fopen(fileName, "w");
 
-    writeListToDotFile(list, dumpFile);
+    writeListToDotFileArrangedIndex(list, dumpFile);
     fclose(dumpFile);
 
     createListGraphicDumpPng(list, fileName, fileNameLength);
@@ -55,7 +55,7 @@ int createListGraphicDumpPng(List *list, char *fileName, int fileNameLength)
     return EXIT_SUCCESS;
 }
 
-int writeListToDotFile(List *list, FILE *dumpFile)
+int writeListToDotFileArrangedIndex(List *list, FILE *dumpFile)
 {
     assert(list);
     assert(dumpFile);
@@ -64,7 +64,101 @@ int writeListToDotFile(List *list, FILE *dumpFile)
     fprintf(dumpFile, "rankdir = LR;\n\n");
 
     fprintf(dumpFile, "node [shape = Mrecord, color  = \"navy\"];\n");
-    fprintf(dumpFile, "edge [color = \"cornFlowerBlue\"];\n\n");
+
+    int capacity = listCapacity(list);
+
+    fprintf(dumpFile, "\nedge [color = \"white\", weight = 10000];\n\n");
+    for (int i = 1; i <= capacity; i++)
+    {
+        int j = i + 1;
+        fprintf(dumpFile, "node%d -> node%d; node%d -> node%d;\n",
+                 i, j, j, i);
+    }
+
+    int headIndex = listHeadIndex(list);
+    int tailIndex = listTailIndex(list);
+
+    if (listSize(list) > 0)
+    {
+        fprintf(dumpFile, "\nedge [color = \"white\", weight = 1000];\n\n");
+        fprintf(dumpFile, "node01 -> node%d; node%d -> node01;\n", headIndex, headIndex);
+        fprintf(dumpFile, "node02 -> node%d; node%d -> node02;\n\n", tailIndex, tailIndex);
+    }
+
+    fprintf(dumpFile, "node01 [label = \"list | head = %d\", ", headIndex);
+    fprintf(dumpFile, "style = \"filled\", fillcolor = \"#afeeee\"];\n");
+
+    fprintf(dumpFile, "node02 [label = \"list | tail = %d\", ", tailIndex);
+    fprintf(dumpFile, "style = \"filled\", fillcolor = \"#afeeee\"];\n\n");
+
+    for (int i = 1; i <= capacity; i++)
+    {
+        fprintf(dumpFile, 
+                "node%d[label = \"%d | data = %d | next = %d | prev = %d\"];\n",
+                i, i, listValueByIndex(list, i), abs(listNextIndex(list, i)), listPrevIndex(list, i));
+    }
+    fprintf(dumpFile, "node%d [style = \"dashed\", label = \"idx = %d\"];\n", 
+            capacity + 1, capacity + 1);
+
+    fprintf(dumpFile, "\nfree  [label = \"free = %d\", ", listFree(list));
+    fprintf(dumpFile, "style = \"filled\", fillcolor = \"#33ff66\"];\n");
+    fprintf(dumpFile, "next [style = \"filled\", fillcolor = \"cornFlowerBlue\"];\n");
+    fprintf(dumpFile, "prev [style = \"filled\", fillcolor = \"salmon\"];\n\n");
+
+    fprintf(dumpFile, "prev -> next; next -> prev;\n");
+    //fprintf(dumpFile, "free -> prev; prev -> free;\n");
+
+    fprintf(dumpFile, "\nedge [color = \"cornFlowerBlue\", weight = 0, constraint = false];\n\n");
+
+    if (headIndex) fprintf(dumpFile, "node01 -> node%d;\n", headIndex);
+    else           fprintf(dumpFile, "node01 -> node02;\n");
+
+    for (int i = 1; i <= capacity; i++)
+    {
+        if (listNextIndex(list, i) == 0)
+        {
+            fprintf(dumpFile, "node%d -> node02;\n", i);
+        }
+        else
+        {
+            fprintf(dumpFile, "node%d -> node%d;\n", i, abs(listNextIndex(list, i)));
+        }
+    }
+
+    fprintf(dumpFile, "\nfree -> node%d [constraint = true]\n\n", listFree(list));
+
+    fprintf(dumpFile, "\nedge [color = \"salmon\", weight = 0, constraint = false];\n\n");
+
+    if (tailIndex) fprintf(dumpFile, "node02 -> node%d;\n", tailIndex);
+    else           fprintf(dumpFile, "node02 -> node01;\n"); 
+
+    for (int i = 1; i <= capacity; i++)
+    {
+        if (listPrevIndex(list, i) == 0)
+        {
+            fprintf(dumpFile, "node%d -> node01;\n", i);
+        }
+        else if (listPrevIndex(list, i) > 0)
+        {
+            fprintf(dumpFile, "node%d -> node%d;\n", i, listPrevIndex(list, i));
+        }
+    }
+
+    fprintf(dumpFile, "}\n");
+
+    return EXIT_SUCCESS;
+}
+
+
+int writeListToDotFileArrangedNext(List *list, FILE *dumpFile)
+{
+    assert(list);
+    assert(dumpFile);
+
+    fprintf(dumpFile, "digraph\n{\n");
+    fprintf(dumpFile, "rankdir = LR;\n\n");
+
+    fprintf(dumpFile, "node [shape = Mrecord, color  = \"navy\"];\n");
 
     fprintf(dumpFile, "next [style = \"filled\", fillcolor = \"cornFlowerBlue\"];\n");
     fprintf(dumpFile, "prev [style = \"filled\", fillcolor = \"salmon\"];\n");
@@ -90,14 +184,6 @@ int writeListToDotFile(List *list, FILE *dumpFile)
 
     fprintf(dumpFile, "free  [label = \"free = %d\", ", listFree(list));
     fprintf(dumpFile, "style = \"filled\", fillcolor = \"#33ff66\"];\n");
-
-    /*fprintf(dumpFile, "\nedge [color = \"white\"];\n\n");
-    for (int i = 0; i < list->capacity; i++)
-    {
-        int j = i + 1;
-        fprintf(dumpFile, "node%d -> node%d; node%d -> node%d;\n",
-                 i, j, j, i);
-    }*/
 
     fprintf(dumpFile, "\nedge [color = \"cornFlowerBlue\"];\n\n");
 

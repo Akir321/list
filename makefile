@@ -52,3 +52,12 @@ graph1:
 
 graph2:
 	dot $(DOT_DIR)graph2.dot -T png -o $(DOT_DIR)graph2.png
+
+graph3:
+	dot $(DOT_DIR)graph3.dot -T png -o $(DOT_DIR)graph3.png
+
+graph4:
+	dot $(DOT_DIR)graph4.dot -T png -o $(DOT_DIR)graph4.png
+
+graph5:
+	dot $(DOT_DIR)graph5.dot -T png -o $(DOT_DIR)graph5.png

@@ -2,7 +2,8 @@
 #define  __GRAPHIC_DUMP_H__
 
 int listGraphicDump   (List *list);
-int writeListToDotFile(List *list, FILE *dumpFile);   
+int writeListToDotFileArrangedNext (List *list, FILE *dumpFile);  
+int writeListToDotFileArrangedIndex(List *list, FILE *dumpFile);
 
 char *createDumpFileName(int fileNumber, int *fileNameLength);
 
