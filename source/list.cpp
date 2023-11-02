@@ -4,6 +4,18 @@
 
 #include "list.h"
 
+struct List
+{
+    int size;
+    int capacity;
+
+    int free;
+
+    elem_t *data;
+    int    *next;
+    int    *prev;
+};
+
 #define LIST_VERIFY            \
     if (listError(list))       \
     {                          \
@@ -11,9 +23,10 @@
         return listError(list);\
     }
 
-int listCtor(List *list, int capacity)
+List *listCtor(int capacity)
 {
-    assert(list);
+    List *list = (List *)calloc(1, sizeof(List));
+    if (!list) return NULL;
 
     list->free = 1;
 
@@ -21,13 +34,13 @@ int listCtor(List *list, int capacity)
     list->size     = 0;
 
     list->data = (elem_t *)calloc(capacity + 1, sizeof(elem_t));
-    if (!list->data) { perror("data->next:"); return LIST_MEMORY_ERROR; }
+    if (!list->data) { perror("data->next:"); return NULL; }
 
     list->next = (elem_t *)calloc(capacity + 1, sizeof(elem_t));
-    if (!list->next) { perror("list->next:"); return LIST_MEMORY_ERROR; }
+    if (!list->next) { perror("list->next:"); return NULL; }
 
     list->prev = (elem_t *)calloc(capacity + 1, sizeof(elem_t));
-    if (!list->prev) { perror("list->prev:"); return LIST_MEMORY_ERROR; }
+    if (!list->prev) { perror("list->prev:"); return NULL; }
 
     list->data[0] = Poison;
     list->next[0] = 0;   //head
@@ -39,12 +52,15 @@ int listCtor(List *list, int capacity)
         list->prev[i] =     - 1;
     }
 
-    return EXIT_SUCCESS;
+    return list;
 }
 
-int listDtor(List *list)
+int listDtor(List **listPtr)
 {
-    assert(list);
+    assert(listPtr);
+    assert(*listPtr);
+
+    List *list = *listPtr;
 
     list->free = -1;
 
@@ -68,6 +84,9 @@ int listDtor(List *list)
         free(list->prev);
         list->prev = 0;
     }
+
+    free(list);
+    *listPtr = NULL;
 
     return EXIT_SUCCESS;
 }
@@ -135,7 +154,63 @@ int listDump(List *list, const char *file, int line, const char *function)
     return EXIT_SUCCESS;
 }
 
-int listAdd(List *list, int arrayAnchorIndex, elem_t value)
+int listHeadIndex(List *list)
+{
+    LIST_VERIFY;
+
+    return list->next[0];
+}
+
+int listTailIndex(List *list)
+{
+    LIST_VERIFY;
+
+    return list->prev[0];
+}
+
+int listNextIndex(List *list, int arrayIndex)
+{
+    LIST_VERIFY;
+
+    return list->next[arrayIndex];
+}
+
+int listPrevIndex(List *list, int arrayIndex)
+{
+    LIST_VERIFY;
+
+    return list->prev[arrayIndex];
+}
+
+int listValueByIndex(List *list, int arrayIndex)
+{
+    LIST_VERIFY;
+
+    return list->data[arrayIndex];
+}
+
+int listCapacity(List *list)
+{
+    LIST_VERIFY;
+
+    return list->capacity;
+}
+
+int listSize(List *list)
+{
+    LIST_VERIFY;
+
+    return list->size;
+}
+
+int listFree(List *list)
+{
+    LIST_VERIFY;
+
+    return list->free;
+}
+
+int listAddAfter(List *list, int arrayAnchorIndex, elem_t value)
 {
     LIST_VERIFY;
 
@@ -164,7 +239,22 @@ int listAdd(List *list, int arrayAnchorIndex, elem_t value)
     list->size++;
 
     LIST_VERIFY;
-    return EXIT_SUCCESS;
+    return index;
+}
+
+int listAddBefore(List *list, int arrayAnchorIndex, elem_t value)
+{
+    return listAddAfter(list, listPrevIndex(list, arrayAnchorIndex), value);
+}
+
+int listPushFront(List *list, elem_t value)
+{
+    return listAddAfter(list, 0, value);
+}
+
+int listPushBack(List *list, elem_t value)
+{
+    return listAddBefore(list, 0, value);
 }
 
 int listDel(List *list, int arrayElemIndex)

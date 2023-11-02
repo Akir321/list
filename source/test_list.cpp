@@ -8,33 +8,44 @@
 
 int main()
 {
-    List lst = {};
-    listCtor(&lst, 2);
+    List *lst = listCtor(2);
     int error = 0;
 
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    ASSISTED(listAdd(&lst, 0, 3));
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    ASSISTED(listPushBack(lst, 3));
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    ASSISTED(listAdd(&lst, 1, 6));
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    ASSISTED(listPushBack(lst, 6));
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    ASSISTED(listAdd(&lst, 2, 7));
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    ASSISTED(listAddAfter(lst, 2, 7));
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    listDel(&lst, 1);
+    listDel(lst, 1);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    listPushFront(lst, 18);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
-    listDel(&lst, 0);
-    LIST_DUMP(&lst);
-    LIST_GR_DUMP(&lst);
+    listPushBack(lst, 19);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
+
+    listAddBefore(lst, 4, 23);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
+
+    listDel(lst, 3);
+    LIST_DUMP(lst);
+    LIST_GR_DUMP(lst);
 
     listDtor(&lst);
+    printf("list after destruction = %p\n", lst);
 }

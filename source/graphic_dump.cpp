@@ -70,19 +70,21 @@ int writeListToDotFile(List *list, FILE *dumpFile)
     fprintf(dumpFile, "prev [style = \"filled\", fillcolor = \"salmon\"];\n");
 
     fprintf(dumpFile, "node0 [label = \"list | <next> head = %d | <prev> tail = %d\",", 
-            list->next[0], list->prev[0]);
+            listHeadIndex(list), listTailIndex(list));
     fprintf(dumpFile, "style = \"filled\", fillcolor = \"#afeeee\", ];\n");
 
-    for (int i = 1; i <= list->capacity; i++)
+    int capacity = listCapacity(list);
+
+    for (int i = 1; i <= capacity; i++)
     {
         fprintf(dumpFile, 
                 "node%d[label = \"idx = %d | data = %d | <next>next = %d | <prev>prev = %d\"];\n",
-                i, i, list->data[i], abs(list->next[i]), list->prev[i]);
+                i, i, listValueByIndex(list, i), abs(listNextIndex(list, i)), listPrevIndex(list, i));
     }
     fprintf(dumpFile, "node%d [style = \"dashed\", label = \"idx = %d\"];\n", 
-            list->capacity + 1, list->capacity + 1);
+            capacity + 1, capacity + 1);
 
-    fprintf(dumpFile, "free  [label = \"free = %d\", ", list->free);
+    fprintf(dumpFile, "free  [label = \"free = %d\", ", listFree(list));
     fprintf(dumpFile, "style = \"filled\", fillcolor = \"#33ff66\"];\n");
 
     /*fprintf(dumpFile, "\nedge [color = \"white\"];\n\n");
@@ -95,22 +97,22 @@ int writeListToDotFile(List *list, FILE *dumpFile)
 
     fprintf(dumpFile, "\nedge [color = \"cornFlowerBlue\"];\n\n");
 
-    for (int i = 0; i <= list->capacity; i++)
+    for (int i = 0; i <= capacity; i++)
     {
         fprintf(dumpFile, "node%d -> node%d;\n",
-                 i, abs(list->next[i]));
+                 i, abs(listNextIndex(list, i)));
     }
 
-    fprintf(dumpFile, "\nfree -> node%d\n\n", list->free);
+    fprintf(dumpFile, "\nfree -> node%d\n\n", listFree(list));
 
     fprintf(dumpFile, "\nedge [color = \"salmon\"];\n\n");
 
-    for (int i = 0; i <= list->capacity; i++)
+    for (int i = 0; i <= capacity; i++)
     {
-        if (list->prev[i] >= 0)
+        if (listPrevIndex(list, i)>= 0)
         {
             fprintf(dumpFile, "node%d -> node%d;\n",
-                     i, list->prev[i]);
+                     i, listPrevIndex(list, i));
         }
     }
 
