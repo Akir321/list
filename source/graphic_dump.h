@@ -5,8 +5,8 @@ int listGraphicDump   (List *list);
 int writeListToDotFileArrangedNext (List *list, FILE *dumpFile);  
 int writeListToDotFileArrangedIndex(List *list, FILE *dumpFile);
 
-char *createDumpFileName(int fileNumber, int *fileNameLength);
+char *createDumpFileName(int fileNumber, int *fileNameLength,  const char *specifier);
 
-int createListGraphicDumpPng(List *list, char *fileName, int fileNameLength);
+int createListGraphicDumpPng(char *fileName, int fileNameLength);
 
 #endif //__GRAPHIC_DUMP_H__

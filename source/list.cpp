@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "list.h"
+#include "html_logfile.h"
 
 struct List
 {
@@ -123,33 +124,27 @@ int listDump(List *list, const char *file, int line, const char *function)
 {
     assert(list);
 
-    printf("I'm listDump() called from %s %s(%d)\n", function, file, line);
+    LOG("I'm listDump() called from %s %s(%d)\n", function, file, line);
 
-    printf(" capacity = %d\n", list->capacity);
-    printf(" size     = %d\n", list->size);
+    LOG(" capacity = %d\n", list->capacity);
+    LOG(" size     = %d\n", list->size);
 
-    printf("  head    = %d\n", list->next[0]);
-    printf("  tail    = %d\n", list->prev[0]);
-    printf("  free    = %d\n", list->free);
+    LOG("  head    = %d\n", list->next[0]);
+    LOG("  tail    = %d\n", list->prev[0]);
+    LOG("  free    = %d\n", list->free);
 
-    printf("Arrays:\n");
-    printf("index  data  next  prev:\n");
+    LOG("Arrays:\n");
+    LOG("index  data  next  prev:\n");
 
     for (int i = 0; i <= list->capacity; i++)
     {
-        if      (i == 0)             putchar('-');
-        else if (list->prev[i] >= 0) putchar('*');
-        else                         putchar(' ');
+        if      (i == 0)             LOG("-");
+        else if (list->prev[i] >= 0) LOG("*");
+        else                         LOG(" ");
 
-        printf("[%2d] " elemFormat " %5d %5d\n", i, list->data[i], list->next[i], list->prev[i]);
+        LOG("[%2d] " elemFormat " %5d %5d\n", i, list->data[i], list->next[i], list->prev[i]);
     }
-    printf("\n\n");
-
-    for (int cur = list->next[0]; cur != 0; cur = list->next[cur])
-    {
-        printf(elemFormat "[%d] -> ", list->data[cur], cur);
-    }
-    printf("\n\n");
+    LOG("\n\n");
 
     return EXIT_SUCCESS;
 }

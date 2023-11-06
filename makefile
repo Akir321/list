@@ -10,17 +10,24 @@ CXX_FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-
 
 SRC_DIR  = source/
 OBJ_DIR  = object/
-DMP_DIR = gr_dump/
+DMP_DIR  = gr_dump/
+LOG_DIR  = log/
 
 INCLUDES =  $(SRC_DIR)list.h           \
-			$(SRC_DIR)graphic_dump.h
+			$(SRC_DIR)graphic_dump.h   \
+			$(SRC_DIR)html_logfile.h
 
 OBJECTS  =  $(OBJ_DIR)test_list.o      \
 		    $(OBJ_DIR)list.o           \
-			$(OBJ_DIR)graphic_dump.o
+			$(OBJ_DIR)graphic_dump.o   \
+			$(OBJ_DIR)html_logfile.o
 
 DUMPS    =  $(DMP_DIR)*.dot            \
 			$(DMP_DIR)*.png
+
+LOGS     =  $(LOG_DIR)*.txt            \
+			$(LOG_DIR)*.log            \
+			$(LOG_DIR)*.html           
 
 all: test_list.exe
 
@@ -37,12 +44,21 @@ $(OBJ_DIR)list.o:         $(SRC_DIR)list.cpp         $(INCLUDES)
 $(OBJ_DIR)graphic_dump.o: $(SRC_DIR)graphic_dump.cpp $(INCLUDES)
 	$(CXX) -c $< -o $@ $(CXX_FLAGS)
 
+$(OBJ_DIR)html_logfile.o: $(SRC_DIR)html_logfile.cpp $(INCLUDES)
+	$(CXX) -c $< -o $@ $(CXX_FLAGS)
 
 
-.PHONY: clean
+
+.PHONY: clean clean_dumps clean_logs
 
 clean:
-	rm $(OBJECTS) *.exe $(DUMPS)
+	rm $(OBJECTS) *.exe 
+	
+clean_dumps:
+	rm $(DUMPS)
+
+clean_logs:
+	rm $(LOG_DIR)*.html
 
 
 DOT_DIR = dot_tests/

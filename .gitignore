@@ -38,3 +38,7 @@ TODO.txt
 *.png
 
 *.json
+
+*.html
+*_log.txt
+*.log
