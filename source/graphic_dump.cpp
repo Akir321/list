@@ -112,7 +112,7 @@ timeHolder getTime()
         return time;
     }
 
-    time.year        =  openTimeTM.tm_year + 1900;
+    time.year        = openTimeTM.tm_year + 1900;
     time.month       = openTimeTM.tm_mon + 1;
     time.day         = openTimeTM.tm_mday;
 

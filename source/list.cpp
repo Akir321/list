@@ -177,7 +177,7 @@ int listPrevIndex(List *list, int arrayIndex)
     return list->prev[arrayIndex];
 }
 
-int listValueByIndex(List *list, int arrayIndex)
+elem_t listValueByIndex(List *list, int arrayIndex)
 {
     LIST_VERIFY;
 
@@ -280,6 +280,8 @@ int listDel(List *list, int arrayElemIndex)
 int listReallocUp(List *list, int reallocRate)
 {
     LIST_VERIFY;
+
+    if (reallocRate <= 0) return LIST_BAD_CAPACITY;
 
     int prevCapacity = list->capacity;
     list->capacity  *= reallocRate;
